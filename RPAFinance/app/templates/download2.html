@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ===== CSS ===== -->
+  <link rel="stylesheet" href="{{ url_for('static', filename = 'css/Main_style.css') }}">
+
+  <!-- ===== Title ===== -->
+  <title>Automation Output</title>
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename = 'img/mini_logo.png')}}">
+
+</head>
+
+<body>
+
+  <div class="split">
+    <div class="left">
+
+      <img src="{{ url_for('static', filename = 'img/logo.png')}}" alt="logo">
+
+    </div>
+
+    <div class="right">
+
+      <div class="Page-title">
+        <h1>Automation Output</h1>
+      </div>
+
+      <div class="processing_container">
+        <div class="response_box">
+          <form action="#">
+            </br>
+            <div class="checkmark_response">
+              <i class="fa fa-arrow-down"></i>
+            </div>
+            </br>
+            <h1>Automated Successfully</h1>
+            <a href='reroute' class="link_main">Back to Main Page</a><br />
+            </br><input type="button" value="Download Output" class="success_admin_button" onclick="window.location.href='download_output'">
+
+          </form>
+        </div>
+      </div>
+
+      <!-- partial -->
+      <script src='https://use.fontawesome.com/releases/v5.0.10/js/all.js'></script>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+      <!-- <script type="text/javascript" src='scripts/upload.js' defer></script> -->
+
+</body>
+
+</html>

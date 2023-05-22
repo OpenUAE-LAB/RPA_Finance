@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ===== CSS ===== -->
+  <link rel="stylesheet" href="css/Main_style.css">
+
+  <!-- ===== Title ===== -->
+  <title>Automation Response</title>
+  <link rel="icon" type="image/x-icon" href="img/mini_logo.png">
+
+  <script>
+    function delay() {window.location = "Upload2.html";}
+  </script>
+  
+</head>
+
+<body onLoad = "setTimeout('delay()', 5000)">
+ 
+  <div class="split">
+    <div class="left">
+
+      <img src="img/logo.png" alt="logo">
+
+    </div>
+
+  <div class="right">
+
+  <div class="Page-title">
+    <h1>Automation Response</h1>
+  </div>
+
+  <!--Success Message-->
+  <!-- <div class="processing_container">
+    <div class="response_box">
+      <form action="#">
+        </br>
+          <div class="checkmark_response">
+            <i class="fas fa-solid fa-check"></i>
+          </div>
+        </br><h1>Uploaded Successfully</h1>     
+        <p>you will be redirected shortly</p>
+      </form>
+    </div>
+  </div> -->
+
+  <!--Error Message-->
+  <div class="processing_container">
+    <div class="response_box">
+      <form action="#">
+        </br>
+          <div class="checkmark_response_error">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+        </br><h1>Something went wrong</h1>     
+        <p>you will be redirected shortly</p>
+      </form>
+    </div>
+  </div>
+  
+
+  <!-- partial -->
+  <script src='https://use.fontawesome.com/releases/v5.0.10/js/all.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+  <!-- <script type="text/javascript" src='scripts/upload.js' defer></script> -->
+
+</body>
+
+</html>

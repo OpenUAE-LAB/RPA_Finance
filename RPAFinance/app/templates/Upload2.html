@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ===== CSS ===== -->
+  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/Main_style.css') }}" defer>
+  <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet"
+    type='text/css'>
+
+  <!-- ===== Title ===== -->
+  <title>Upload excel file</title>
+  <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='img/mini_logo.png')}}">
+</head>
+
+<body>
+  <div class="split">
+    <div class="left">
+
+      <img src="{{url_for('static', filename='img/logo.png')}}" alt="logo">
+
+    </div>
+
+    <div class="right">
+
+      <div>
+        <!-- Steps list bar -->
+        <div id="multi-step-form-container">
+          <ul class="form-stepper form-stepper-horizontal text-center mx-auto pl-0">
+            <!-- Step 1 -->
+            <li class="form-stepper-active text-center form-stepper-list" step="1">
+              <a class="mx-2">
+                <span class="form-stepper-circle">
+                  <span>1</span>
+                </span>
+                <div class="label">Upload DML Data</div>
+              </a>
+            </li>
+            <!-- Step 2 -->
+            <li class="form-stepper-unfinished text-center form-stepper-list" step="2">
+              <a class="mx-2">
+                <span class="form-stepper-circle text-muted">
+                  <span>2</span>
+                </span>
+                <div class="label text-muted">Upload PDF Data</div>
+              </a>
+            </li>
+            <!-- Step 3 -->
+            <li class="form-stepper-unfinished text-center form-stepper-list" step="3">
+              <a class="mx-2">
+                <span class="form-stepper-circle text-muted">
+                  <span>3</span>
+                </span>
+                <div class="label text-muted">Confirm Files Uploaded</div>
+              </a>
+            </li>
+          </ul>
+          <!--Step 1 Content-->
+          <form id="userAccountSetupForm" name="userAccountSetupForm" enctype="multipart/form-data" method="POST">
+            <!-- Step 1 Content -->
+            <section id="step-1" class="form-step">
+              <!-- Step 1 input fields -->
+              <div class="upload_container">
+                <div class="drag-area" id="drag-area-1">
+                  <div class="icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                  </div>
+                  <h1>Upload Daily Traffic DML Data</h1>
+                  <header class="header-1">Drag & Drop</header>
+                  <span>OR<br></span>
+                  <button class="browse_button-1">Browse File</button>
+                  <input class="input-1" type="file" hidden>
+                </div>
+                <div class="mt-3">
+                  <button class="button btn-navigate-form-step" type="button" step_number="2" onclick = "saveFile1()">Next</button>
+                </div>
+            </section>
+
+            <section id="step-2" class="form-step d-none">
+              <!-- Step 2 input fields -->
+              <div class="upload_container">
+
+                <div class="drag-area" id="drag-area-2">
+                  <div class="icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                  </div>
+                  <h1>Upload non-DML Data</h1>
+                  <header class="header-2">Drag & Drop</header>
+                  <span>OR<br></span>
+                  <button class="browse_button-2">Browse File</button>
+                  <input class="input-2" type="file" hidden>
+                </div>
+
+                <div class="mt-3">
+                  <button class="button btn-navigate-form-step" type="button" step_number="1">Prev</button>
+                  <button class="button btn-navigate-form-step" type="button" step_number="3" onclick = "saveFile2()">Next</button>
+                </div>
+
+              </div>
+
+            </section>
+
+            <section id="step-3" class="form-step d-none">
+              <!-- Step 3 input fields -->
+              <div class="admin_container">
+                <!-- <div class="drag-area"> -->
+                <h1 class="header-step">Uploaded Files</h1></br>
+                <div class="uploaded-area">
+                  <table id="table">
+                    <thead>
+                      <tr>
+                        <th colspan="2"> File properties</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="text-align: center;"><i class="fa-regular fa-file-code" id="excel_icon"></i></td>
+                        <td id="file1-name"></td>
+                        <td>Daily Traffic Data</td>
+                        <td class="date-column" id="date1"></td>
+                        <td><button class="icon_upload_button" id="browse_button-1-1"><i class="fa fa-upload"></i></button></td>
+                        <td><button class="icon_download_button" type="button" onclick="downloadDML(this)"><i class="fa fa-arrow-down"></i></button></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align: center;"><i class="fa-sharp fa-regular fa-file-pdf" aria-hidden="true" id="excel_icon"></i></td>
+                        <td id="file2-name"></td>
+                        <td>Non-DML Data</td>
+                        <td class="date-column" id="date2"></td>
+                        <td><button class="icon_upload_button" id="browse_button-2-2"><i class="fa fa-upload"></i></button></td>
+                        <td><button class="icon_download_button" type="button" onclick="downloadNONDML(this)"><i class="fa fa-arrow-down"></i></button></td>
+                      </tr>
+                      <!-- <tr>
+                        <td style="text-align: center;"><i class="fa-regular fa-file-excel" aria-hidden="true" id="excel_icon"></i></td>
+                        <td id="file3-name"></td>
+                        <td>Validation Dataset</td>
+                        <td class="date-column" id="date3"></td>
+                        <td><button class="icon_upload_button" id="browse_button-3"><i class="fa fa-upload"></i></button><input class="input-3" type="file" hidden></td>
+                        <td><button class="icon_download_button" type="button"><i class="fa fa-arrow-down" onclick="downloadDML();" ></i></button></td>
+                      </tr> -->
+                    </tbody>
+                  </table>
+                </div>
+                <!-- </div> -->
+                <div class="mt-3">
+                  <button class="button btn-navigate-form-step" type="button" step_number="2">Prev</button>
+                  <button class="button submit-btn" type="button" id="start-processing"
+                    onclick="window.location.href='loading'">Start Processing</button>
+                </div>
+              </div>
+            </section>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+  </div>
+
+  <script src="https://kit.fontawesome.com/7a6bba4095.js" crossorigin="anonymous"></script>
+  <script src='https://use.fontawesome.com/releases/v5.0.10/js/all.js'></script>
+  <script type="text/javascript" src="{{ url_for('static', filename= 'scripts/upload.js') }}" defer></script>
+
+
+</body>
+
+</html>
