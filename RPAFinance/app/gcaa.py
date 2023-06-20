@@ -179,11 +179,12 @@ def GCAA():
         duplicates_ATA = []
         drop_rows = []
 
-
-        ###################################################
+        # Updated Part Start
+        ###################################################        12 Duplicates ,   17 Non Duplicates
         for i in range (len(df_NON_Radar)):
+            flag = True
             for j in range(len(df_Radar)):  
-                if  (df_Radar['Callsign'][j] == df_NON_Radar['Callsign'][i] and df_Radar['A/C'][j] == df_NON_Radar['A/C'][i] and df_Radar['DEPATURE'][j] == df_NON_Radar['ADEP'][i] and df_Radar['DESTINATION'][j] == df_NON_Radar['ADES'][i] ):                     
+                if  ((df_Radar['Callsign'][j] == df_NON_Radar['Callsign'][i] and df_Radar['A/C'][j] == df_NON_Radar['A/C'][i] and df_Radar['DEPATURE'][j] == df_NON_Radar['ADEP'][i] and df_Radar['DESTINATION'][j] == df_NON_Radar['ADES'][i] ) or (df_Radar['Callsign'][j] == df_NON_Radar['Callsign'][i] and df_Radar['A/C'][j] == df_NON_Radar['A/C'][i] and df_Radar['ENTRY FIX'][j] == df_NON_Radar['ADEP'][i] and df_Radar['EXIT FIX'][j] == df_NON_Radar['ADES'][i] )) and flag:                      
                     duplicates_Callsign.append(df_NON_Radar['Callsign'][i])
                     duplicates_AcType.append(df_NON_Radar['A/C'][i])
                     duplicates_Depa.append(df_NON_Radar['ADEP'][i])
@@ -194,7 +195,9 @@ def GCAA():
                     duplicates_ATA.append(df_NON_Radar['ATA'][i])
 
                     drop_rows.append(i)
-                    
+                    flag = False
+        
+        # Updated Part End          
         ########################################
         #Save Non Duplicates
 #         df_NON_Radar.drop(index = drop_rows , inplace = True)
