@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, Response, send_file
 import glob, os , pdfplumber, datefinder, re
 import pandas as pd
-import os
 import tabula
 import csv
 # import time
