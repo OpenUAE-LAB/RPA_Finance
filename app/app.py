@@ -6,7 +6,7 @@ import csv
 # import time
 import shutil
 # import datetime
-from gcaa import GCAA
+# from gcaa import GCAA
 
 
 def GCAA():
