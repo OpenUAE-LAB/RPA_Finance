@@ -361,3 +361,5 @@ def create_app():
         app.run(debug=True)
         
     return app
+
+create_app()

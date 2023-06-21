@@ -1,1 +1,0 @@
-In this folder the output of the system will be stored. 

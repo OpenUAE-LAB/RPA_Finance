@@ -1,1 +1,0 @@
-In this folder the daily traffic data (Excel) will be stored. 
