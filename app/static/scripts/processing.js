@@ -1,7 +1,7 @@
 function gcaa_function(){
     setTimeout(async function(){
       try{
-          fetch('/processing', {
+          fetch('https://rpa-finance.onrender.com/processing', {
               method: 'GET'
           }).then(function(response){
             if (response.ok){
