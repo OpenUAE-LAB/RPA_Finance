@@ -1,8 +1,9 @@
-# Update package lists
-apt update
+# Install sdkman
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 # Install Java
-apt install -y default-jdk
+sdk install java
 
 # Upgrade pip
 pip install --upgrade pip
