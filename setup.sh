@@ -22,3 +22,4 @@ pip install --upgrade pip
 
 # Install Python dependencies
 pip install -r requirements.txt
+pip install --upgrade tabula-py
