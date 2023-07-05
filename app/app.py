@@ -4,6 +4,7 @@ import pandas as pd
 import tabula
 import csv
 from PyPDF2 import PdfReader
+import camelot
 # import time
 import shutil
 # import datetime
@@ -11,77 +12,78 @@ import shutil
 
 
 def GCAA():
-    #################################################################
+        #################################################################
 
-    # Rename Daily Traffic files to be DML_01012023
-    files = glob.glob("app/Daily_Traffic/*")
+        # Rename Daily Traffic files to be DML_01012023
+        files = glob.glob("app/Daily_Traffic/*")
 
-    for file in files:
-        df = pd.read_csv(file)
-        date = df['ENTRY DATE'][0]
-        matches = list(datefinder.find_dates(date))
+        for file in files:
+            df = pd.read_csv(file)
+            date = df['ENTRY DATE'][0]
+            matches = list(datefinder.find_dates(date))
 
-        day = str(matches[0].day)
-        Month = str(matches[0].month)
+            day = str(matches[0].day)
+            month = str(matches[0].month)
 
-        if len(Month) == 1:
-            Month = '0' + Month
+            if len(month) == 1:
+                month = '0' + month
 
-        if len(day) == 1:
-            day = '0' + day
-        year = str(matches[0].year)
-        file_date = day + Month + year
+            if len(day) == 1:
+                day = '0' + day
+            year = str(matches[0].year)  
+            file_date = day + month + year
 
-        new_name = 'app/Daily_Traffic/' + 'DML_' + file_date + '.csv'
+            new_name = 'app/Daily_Traffic/' + 'DML_' + file_date + '.csv'
 
-        os.rename(file, new_name)
-    #################################################################
+            os.rename(file, new_name)
+        #################################################################
 
-    files = glob.glob("app/NO DML/*")
+        files = glob.glob("app/NO DML/*")
 
-    for file in files:
-        if "Non FIR Movements" in file:
-            file_name = "Non FIR Movements - " + file.split('-')[-1].replace(" ", "")
-        else:
-            file_name = "NO DML " + file.split(" ")[-1]
+        for file in files:
+            if "Non FIR Movements" in file:
+                file_name = "Non FIR Movements - " + file.split('-')[-1].replace(" ","")
+            else:
+                file_name = "NO DML " + file.split(" ")[-1]
 
-        ####################################################################################
-        # Get date from file name in format ddmmyyyy for example 01012023
-        matches = list(datefinder.find_dates(file_name))
+            ####################################################################################
+            # Get date from file name in format ddmmyyyy for example 01012023
+            matches = list(datefinder.find_dates(file_name))
 
-        day = str(matches[0].day)
-        Month = str(matches[0].month)
+            day = str(matches[0].day)
+            month = str(matches[0].month)
 
-        if len(Month) == 1:
-            Month = '0' + Month
+            if len(month) == 1:
+                month = '0' + month
 
-        if len(day) == 1:
-            day = '0' + day
-        year = str(matches[0].year)
-        file_date = day + Month + year
-        ##########################################################################################################
-        ##########################################################################################################
-        ##########################################################################################################
-        # Convert NO DML pdf files to xlsx
-        if "Non FIR Movements" in file:
-            # Read a PDF File
-            with open(file, 'rb') as pdf_file:
-                pdf = PdfReader(pdf_file)
-                num_pages = pdf.getNumPages()
+            if len(day) == 1:
+                day = '0' + day
+            year = str(matches[0].year)  
+            file_date = day + month + year
+            ##########################################################################################################
+            ##########################################################################################################
+            ##########################################################################################################
+            # Convert NO DML pdf files to xlsx
+            if "Non FIR Movements" in file:
+                tables = camelot.read_pdf(file, flavor='stream', pages='all')
+                dfs = []
+                for table in tables:
+                    df = table.df
+                    dfs.append(df)
 
-                data = []
-                for page_num in range(num_pages):
-                    page = pdf.getPage(page_num)
-                    text = page.extract_text()
-                    rows = text.split('\n')
-                    for row in rows:
-                        row_data = row.split(',')
-                        if len(row_data) == 6 and 'CALLSIGN' not in row:
-                            data.append(row_data)
+                daf = pd.concat(dfs, ignore_index=True)
+            else:
+                reader = PdfReader(file)
+                num_pages = len(reader.pages)
+                tables = camelot.read_pdf(file, flavor='lattice', pages=f'1-{num_pages}')
+                dfs = []
+                for table in tables:
+                    df = table.df
+                    dfs.append(df)
 
-            daf = pd.DataFrame(data, columns=["Callsign", "A/C", "ADEP", "ATD", 'ADES', "ATA"])
+                daf = pd.concat(dfs, ignore_index=True)
 
-            daf.insert(0, 'Date', day + '-' + Month + '-' + year)
+            daf.insert(0, 'Date', day + '-' + month + '-' + year)
 
             daf.to_excel(file_name.replace(".pdf", ".xlsx"), index=False)
 
@@ -92,7 +94,7 @@ def GCAA():
 
         # Get the correct DML file name from NO DML file. So, we can compare each day separately
         if "Non FIR Movements" in file:
-            DML_file_name = "Daily_Traffic_" + file.split('-')[-1].replace(" ", "").replace('.pdf', '')
+            DML_file_name = "Daily_Traffic_" + file.split('-')[-1].replace(" ","").replace('.pdf','')
 
         else:
             DML_file_name = "Daily_Traffic_" + file.split(" ")[-1].replace(".pdf", "")[:-2] + str(matches[0].year)# use [:-2], so we may have months with more than 3 letters
