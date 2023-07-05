@@ -3,6 +3,7 @@ import glob, os , pdfplumber, datefinder, re
 import pandas as pd
 import tabula
 import csv
+from PyPDF2 import PdfFileReader
 # import time
 import shutil
 # import datetime
@@ -28,10 +29,10 @@ def GCAA():
 
         if len(day) == 1:
             day = '0' + day
-        year = str(matches[0].year)  
-        file_date =  day + Month  + year
+        year = str(matches[0].year)
+        file_date = day + Month + year
 
-        new_name = 'app/Daily_Traffic/'+'DML_'+file_date + '.csv'
+        new_name = 'app/Daily_Traffic/' + 'DML_' + file_date + '.csv'
 
         os.rename(file, new_name)
     #################################################################
@@ -40,7 +41,7 @@ def GCAA():
 
     for file in files:
         if "Non FIR Movements" in file:
-            file_name = "Non FIR Movements - " + file.split('-')[-1].replace(" ","")
+            file_name = "Non FIR Movements - " + file.split('-')[-1].replace(" ", "")
         else:
             file_name = "NO DML " + file.split(" ")[-1]
 
@@ -56,58 +57,45 @@ def GCAA():
 
         if len(day) == 1:
             day = '0' + day
-        year = str(matches[0].year)  
-        file_date =  day +  Month  + year
+        year = str(matches[0].year)
+        file_date = day + Month + year
         ##########################################################################################################
         ##########################################################################################################
         ##########################################################################################################
         # Convert NO DML pdf files to xlsx
         if "Non FIR Movements" in file:
-
             # Read a PDF File
-            df = tabula.read_pdf(file, pages='all')
-            # convert PDF into CSV
-            tabula.convert_into(file, 'nonradar.csv', output_format="csv", pages='all')
+            with open(file, 'rb') as pdf_file:
+                pdf = PdfFileReader(pdf_file)
+                num_pages = pdf.getNumPages()
 
-            ###############################################################################
-            
-
-            # open the CSV file
-            with open('nonradar.csv', 'r') as csvfile:
-                # create a CSV reader object
-                reader = csv.reader(csvfile)
-
-                # loop through each row in the CSV file
                 data = []
-                for row in reader:
-                    # print each row
-                    if len(row)  ==6 and 'CALLSIGN' not in row:
-                        data.append(row)
-            #             print(row)
-            ##############################################################################            
-            daf = pd.DataFrame(data , columns = [ "Callsign", "A/C", "ADEP" , "ATD", 'ADES',"ATA"])
-            
+                for page_num in range(num_pages):
+                    page = pdf.getPage(page_num)
+                    text = page.extract_text()
+                    rows = text.split('\n')
+                    for row in rows:
+                        row_data = row.split(',')
+                        if len(row_data) == 6 and 'CALLSIGN' not in row:
+                            data.append(row_data)
 
-            daf.insert(0, 'Date', day + '-' + Month  +'-'+ year)
-            
+            daf = pd.DataFrame(data, columns=["Callsign", "A/C", "ADEP", "ATD", 'ADES', "ATA"])
 
-#             daf['Date'] = pd.to_datetime(daf['Date'], format='%d-%m-%Y').dt.strftime('%d%m%Y')
-
+            daf.insert(0, 'Date', day + '-' + Month + '-' + year)
 
             daf.to_excel(file_name.replace(".pdf", ".xlsx"), index=False)
-    
-       
+
         ##########################################################################################################
         ##########################################################################################################
-        ##########################################################################################################   
+        ##########################################################################################################
         # Part 3: Create Radar Excel
 
-        # Get the correct DML file name from NO DML file. So, we can compare each day separatly
+        # Get the correct DML file name from NO DML file. So, we can compare each day separately
         if "Non FIR Movements" in file:
-            DML_file_name = "Daily_Traffic_" + file.split('-')[-1].replace(" ","").replace('.pdf','')
+            DML_file_name = "Daily_Traffic_" + file.split('-')[-1].replace(" ", "").replace('.pdf', '')
 
-        else: 
-            DML_file_name = "Daily_Traffic_" + file.split(" ")[-1].replace(".pdf", "")[:-2]+ str(matches[0].year) # use [:-2], so we may have months with more than 3 letters
+        else:
+            DML_file_name = "Daily_Traffic_" + file.split(" ")[-1].replace(".pdf", "")[:-2] + str(matches[0].year)# use [:-2], so we may have months with more than 3 letters
 
         ##############################################################
         df_Radar = pd.read_csv("app/Daily_Traffic/DML_"+file_date+'.csv')
