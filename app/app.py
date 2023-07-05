@@ -3,7 +3,7 @@ import glob, os , pdfplumber, datefinder, re
 import pandas as pd
 import tabula
 import csv
-from PyPDF2 import PdfFileReader
+from PyPDF2 import PdfReader
 # import time
 import shutil
 # import datetime
@@ -66,7 +66,7 @@ def GCAA():
         if "Non FIR Movements" in file:
             # Read a PDF File
             with open(file, 'rb') as pdf_file:
-                pdf = PdfFileReader(pdf_file)
+                pdf = PdfReader(pdf_file)
                 num_pages = pdf.getNumPages()
 
                 data = []
