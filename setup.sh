@@ -2,9 +2,6 @@
 curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-# Install Java
-sdk install java
-
 # Install Java Development Kit (JDK)
 sdk install java
 
