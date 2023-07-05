@@ -8,8 +8,22 @@ import pandas as pd
 import csv
 import tabula
 # import xlsxwriter
+import os
+import subprocess
 
 def GCAA():
+    #################################################################
+    # Install sdkman
+    subprocess.call(["curl", "-s", "https://get.sdkman.io", "|", "bash"])
+    subprocess.call(["source", "$HOME/.sdkman/bin/sdkman-init.sh"])
+
+    # Install Java Development Kit (JDK)
+    subprocess.call(["sdk", "install", "java"])
+
+    # Set Java environment variables
+    java_home = os.path.expanduser("~/.sdkman/candidates/java/current")
+    os.environ["JAVA_HOME"] = java_home
+    os.environ["PATH"] = java_home + "/bin:" + os.environ["PATH"]
     #################################################################
 
     # Rename Daily Traffic files to be DML_01012023
