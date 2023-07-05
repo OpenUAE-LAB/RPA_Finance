@@ -13,14 +13,12 @@ import subprocess
 
 def GCAA():
     #################################################################
-    # Install sdkman
-    subprocess.call(["curl", "-s", "https://get.sdkman.io" , "|", "bash"])
-
     # Install Java Development Kit (JDK)
-    subprocess.call(["/bin/bash", "-c", "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install java"])
+    subprocess.call(["apt-get", "update"])
+    subprocess.call(["apt-get", "install", "openjdk-11-jdk", "-y"])
 
     # Set Java environment variables
-    java_home = os.path.expanduser("~/.sdkman/candidates/java/current")
+    java_home = "/usr/lib/jvm/java-11-openjdk-amd64"
     os.environ["JAVA_HOME"] = java_home
     os.environ["PATH"] = java_home + "/bin:" + os.environ["PATH"]
     #################################################################
