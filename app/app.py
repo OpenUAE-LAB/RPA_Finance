@@ -1,103 +1,112 @@
 from flask import Flask, render_template, request, jsonify, redirect, Response, send_file
 import glob, os , pdfplumber, datefinder, re
+import numpy as np
 import pandas as pd
-import tabula
-import csv
-from PyPDF2 import PdfReader
-import camelot
-# import time
-import shutil
+# import openpyxl
 # import datetime
-# from gcaa import GCAA
-
+import csv
+import tabula
+# import xlsxwriter
 
 def GCAA():
-        #################################################################
+    #################################################################
 
-        # Rename Daily Traffic files to be DML_01012023
-        files = glob.glob("app/Daily_Traffic/*")
+    # Rename Daily Traffic files to be DML_01012023
+    files = glob.glob("app/Daily_Traffic/*")
 
-        for file in files:
-            df = pd.read_csv(file)
-            date = df['ENTRY DATE'][0]
-            matches = list(datefinder.find_dates(date))
+    for file in files:
+        df = pd.read_csv(file)
+        date = df['ENTRY DATE'][0]
+        matches = list(datefinder.find_dates(date))
 
-            day = str(matches[0].day)
-            month = str(matches[0].month)
+        day = str(matches[0].day)
+        Month = str(matches[0].month)
 
-            if len(month) == 1:
-                month = '0' + month
+        if len(Month) == 1:
+            Month = '0' + Month
 
-            if len(day) == 1:
-                day = '0' + day
-            year = str(matches[0].year)  
-            file_date = day + month + year
+        if len(day) == 1:
+            day = '0' + day
+        year = str(matches[0].year)  
+        file_date =  day + Month  + year
 
-            new_name = 'app/Daily_Traffic/' + 'DML_' + file_date + '.csv'
+        new_name = 'app/Daily_Traffic/'+'DML_'+file_date + '.csv'
 
-            os.rename(file, new_name)
-        #################################################################
+        os.rename(file, new_name)
+    #################################################################
 
-        files = glob.glob("app/NO DML/*")
+    files = glob.glob("app/NO DML/*")
 
-        for file in files:
-            if "Non FIR Movements" in file:
-                file_name = "Non FIR Movements - " + file.split('-')[-1].replace(" ","")
-            else:
-                file_name = "NO DML " + file.split(" ")[-1]
+    for file in files:
+        if "Non FIR Movements" in file:
+            file_name = "Non FIR Movements - " + file.split('-')[-1].replace(" ","")
+        else:
+            file_name = "NO DML " + file.split(" ")[-1]
 
-            ####################################################################################
-            # Get date from file name in format ddmmyyyy for example 01012023
-            matches = list(datefinder.find_dates(file_name))
+        ####################################################################################
+        # Get date from file name in format ddmmyyyy for example 01012023
+        matches = list(datefinder.find_dates(file_name))
 
-            day = str(matches[0].day)
-            month = str(matches[0].month)
+        day = str(matches[0].day)
+        Month = str(matches[0].month)
 
-            if len(month) == 1:
-                month = '0' + month
+        if len(Month) == 1:
+            Month = '0' + Month
 
-            if len(day) == 1:
-                day = '0' + day
-            year = str(matches[0].year)  
-            file_date = day + month + year
-            ##########################################################################################################
-            ##########################################################################################################
-            ##########################################################################################################
-            # Convert NO DML pdf files to xlsx
-            if "Non FIR Movements" in file:
-                tables = camelot.read_pdf(file, flavor='stream', pages='all')
-                dfs = []
-                for table in tables:
-                    df = table.df
-                    dfs.append(df)
+        if len(day) == 1:
+            day = '0' + day
+        year = str(matches[0].year)  
+        file_date =  day +  Month  + year
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        # Convert NO DML pdf files to xlsx
+        if "Non FIR Movements" in file:
 
-                daf = pd.concat(dfs, ignore_index=True)
-            else:
-                reader = PdfReader(file)
-                num_pages = len(reader.pages)
-                tables = camelot.read_pdf(file, flavor='lattice', pages=f'1-{num_pages}')
-                dfs = []
-                for table in tables:
-                    df = table.df
-                    dfs.append(df)
+            # Read a PDF File
+            df = tabula.read_pdf(file, pages='all')
+            # convert PDF into CSV
+            tabula.convert_into(file, 'nonradar.csv', output_format="csv", pages='all')
 
-                daf = pd.concat(dfs, ignore_index=True)
+            ###############################################################################
+            
 
-            daf.insert(0, 'Date', day + '-' + month + '-' + year)
+            # open the CSV file
+            with open('nonradar.csv', 'r') as csvfile:
+                # create a CSV reader object
+                reader = csv.reader(csvfile)
+
+                # loop through each row in the CSV file
+                data = []
+                for row in reader:
+                    # print each row
+                    if len(row)  ==6 and 'CALLSIGN' not in row:
+                        data.append(row)
+            #             print(row)
+            ##############################################################################            
+            daf = pd.DataFrame(data , columns = [ "Callsign", "A/C", "ADEP" , "ATD", 'ADES',"ATA"])
+            
+
+            daf.insert(0, 'Date', day + '-' + Month  +'-'+ year)
+            
+
+#             daf['Date'] = pd.to_datetime(daf['Date'], format='%d-%m-%Y').dt.strftime('%d%m%Y')
+
 
             daf.to_excel(file_name.replace(".pdf", ".xlsx"), index=False)
-
+    
+       
         ##########################################################################################################
         ##########################################################################################################
-        ##########################################################################################################
+        ##########################################################################################################   
         # Part 3: Create Radar Excel
 
-        # Get the correct DML file name from NO DML file. So, we can compare each day separately
+        # Get the correct DML file name from NO DML file. So, we can compare each day separatly
         if "Non FIR Movements" in file:
             DML_file_name = "Daily_Traffic_" + file.split('-')[-1].replace(" ","").replace('.pdf','')
 
-        else:
-            DML_file_name = "Daily_Traffic_" + file.split(" ")[-1].replace(".pdf", "")[:-2] + str(matches[0].year)# use [:-2], so we may have months with more than 3 letters
+        else: 
+            DML_file_name = "Daily_Traffic_" + file.split(" ")[-1].replace(".pdf", "")[:-2]+ str(matches[0].year) # use [:-2], so we may have months with more than 3 letters
 
         ##############################################################
         df_Radar = pd.read_csv("app/Daily_Traffic/DML_"+file_date+'.csv')
