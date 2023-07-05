@@ -13,9 +13,11 @@ import subprocess
 
 def GCAA():
     #################################################################
-    # Install sdkman
+ # Install sdkman
     subprocess.call(["curl", "-s", "https://get.sdkman.io", "|", "bash"])
-    subprocess.call(["source", "$HOME/.sdkman/bin/sdkman-init.sh"])
+
+    # Reload the shell to apply changes
+    subprocess.call(["exec", "bash"])
 
     # Install Java Development Kit (JDK)
     subprocess.call(["sdk", "install", "java"])
