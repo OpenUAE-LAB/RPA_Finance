@@ -1,3 +1,4 @@
+import shutil
 from flask import Flask, render_template, request, jsonify, redirect, Response, send_file
 import glob, os , pdfplumber, datefinder, re
 import numpy as np
