@@ -22,7 +22,7 @@ import csv
 import camelot
 
 def GCAA():
-    #################################################################
+#################################################################
 
     # Rename Daily Traffic files to be DML_01012023
     files = glob.glob("app/Daily_Traffic/*")
@@ -75,7 +75,7 @@ def GCAA():
         ##########################################################################################################
         # Convert NO DML pdf files to xlsx
         if "Non FIR Movements" in file:
-            tables = camelot.read_pdf(file, pages='all')
+            tables = camelot.read_pdf(file, flavor='lattice', pages='all')
 
             # Combine all tables into a single DataFrame
             df_list = [table.df for table in tables]
