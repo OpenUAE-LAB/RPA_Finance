@@ -69,7 +69,7 @@ def GCAA():
             # Read a PDF File
             #df = tabula.read_pdf(file, pages='all')
             # convert PDF into CSV
-            tabula.convert_into(file, file_name.replace(".pdf", ".xlsx"), output_format="xlsx", pages='all')
+            tabula.convert_into(file, file_name.replace(".pdf", ".csv"), output_format="csv", pages='all')
 
             ###############################################################################
             
