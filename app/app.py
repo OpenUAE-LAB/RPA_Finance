@@ -67,9 +67,9 @@ def GCAA():
         if "Non FIR Movements" in file:
 
             # Read a PDF File
-            #df = tabula.read_pdf(file, pages='all')
+            df = tabula.read_pdf(file, pages='all')
             # convert PDF into CSV
-            tabula.convert_into(file, file_name.replace(".pdf", ".csv"), output_format="csv", pages='all')
+            tabula.convert_into(file, 'nonradar.csv', output_format="csv", pages='all')
 
             ###############################################################################
             
