@@ -12,6 +12,8 @@ import os
 import subprocess
 
 def GCAA():
+    java_home = os.environ.get('JAVA_HOME')
+    print("JAVA_HOME:", java_home)
     #################################################################
 
     # Rename Daily Traffic files to be DML_01012023
