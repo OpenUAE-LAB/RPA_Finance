@@ -7,6 +7,14 @@ import datetime
 #from gcaa import GCAA
 
 def GCAA():
+    import glob, os , pdfplumber, datefinder, re
+    import numpy as np
+    import pandas as pd
+    import openpyxl
+    import datetime
+    import csv
+    import tabula
+    import xlsxwriter
     #################################################################
     
     # Rename Daily Traffic files to be DML_01012023
